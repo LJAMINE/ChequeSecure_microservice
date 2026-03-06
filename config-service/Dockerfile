@@ -1,10 +1,7 @@
 FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-COPY config-service/pom.xml config-service/
+COPY . .
 RUN ./mvnw dependency:go-offline -pl config-service
-COPY config-service/src config-service/src
 RUN ./mvnw package -pl config-service -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
