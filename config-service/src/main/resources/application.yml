@@ -1,0 +1,22 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-service
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/your-org/cheque-secure-config
+          default-label: main
+          clone-on-start: true
+        # Alternative: native file system
+        # native:
+        #   search-locations: classpath:/configurations
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

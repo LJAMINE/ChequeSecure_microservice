@@ -1,0 +1,50 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: commercant-service
+          uri: lb://commercant-service
+          predicates:
+            - Path=/api/commercant/**
+          filters:
+            - StripPrefix=2
+
+        - id: banque-centrale-service
+          uri: lb://banque-centrale-service
+          predicates:
+            - Path=/api/banque-centrale/**
+          filters:
+            - StripPrefix=2
+
+        - id: agence-bancaire-service
+          uri: lb://agence-bancaire-service
+          predicates:
+            - Path=/api/agence/**
+          filters:
+            - StripPrefix=2
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/chequesecure
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
