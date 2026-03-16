@@ -2,29 +2,35 @@ package com.chequesecure.banquecentrale.controller;
 
 import com.chequesecure.banquecentrale.dto.CertificationRequestDTO;
 import com.chequesecure.banquecentrale.dto.CertificationResponseDTO;
+import com.chequesecure.banquecentrale.dto.DemandeCertificationResponseDTO;
+import com.chequesecure.banquecentrale.service.CertificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Endpoint de certification - reçoit les demandes du commerçant.
- * Stub initial : l'orchestration complète (appel agence via OpenFeign) sera implémentée
- * lors du développement du module Banque Centrale.
- */
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/banque-centrale")
+@RequiredArgsConstructor
 @Tag(name = "Certification", description = "Demandes de certification de chèques")
 public class CertificationController {
+
+    private final CertificationService certificationService;
 
     @PostMapping("/certifications")
     @Operation(summary = "Demander une certification", description = "Reçoit une demande du commerçant, route vers l'agence bancaire")
     public ResponseEntity<CertificationResponseDTO> demanderCertification(@RequestBody CertificationRequestDTO request) {
-        // Stub : AgenceBancaire et OpenFeign vers agence seront implémentés dans l'étape suivante
-        CertificationResponseDTO response = CertificationResponseDTO.builder()
-                .statut("REFUSE")
-                .motifRefus("Agence bancaire non encore configurée pour le code " + request.getCodeBanque())
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(certificationService.demanderCertification(request));
+    }
+
+    @GetMapping("/certifications/historique")
+    @Operation(summary = "Historique des certifications", description = "Consulter l'historique des demandes de certification traitées")
+    public ResponseEntity<List<DemandeCertificationResponseDTO>> getHistorique(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(certificationService.getHistoriqueCertifications(page, size));
     }
 }
